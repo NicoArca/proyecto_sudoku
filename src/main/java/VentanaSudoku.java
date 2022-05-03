@@ -11,18 +11,11 @@ import javax.swing.*;
 public class VentanaSudoku extends JFrame implements ActionListener, WindowListener, KeyListener {
 
     private final JPanel panelCentral;
-    private JTextField[] casilla = new JTextField[81];
+    private CasillaSudoku[] casilla = new CasillaSudoku[81];
     private JMenuItem mnuReiniciar, mnuResolver, mnuSalir;
 
     public VentanaSudoku(String title) throws HeadlessException {
         super(title);
-
-        // Ajustes del panel central del sudoku
-        panelCentral = new JPanel();
-        panelCentral.setPreferredSize(new Dimension(600, 600));
-        panelCentral.setBackground(new Color(235, 235, 235));
-        panelCentral.setLayout(new GridLayout(81 / 9, 9, 4, 4));
-        add(panelCentral);
 
         // Creación barra de menú
         JMenuBar mb = new JMenuBar();
@@ -31,22 +24,35 @@ public class VentanaSudoku extends JFrame implements ActionListener, WindowListe
         JMenu mnOpciones = new JMenu("Opciones");
         mnOpciones.addActionListener(this);
 
-        // Creando y añadiendo items del menú Opciones
+        // Creando JMenuItems del menú Opciones
         // Añadiendo también un Listener para cada Item
         mnuReiniciar = new JMenuItem("Reiniciar");
         mnuReiniciar.addActionListener(this);
+
         mnuResolver = new JMenuItem("Resolver");
         mnuResolver.addActionListener(this);
+
         mnuSalir = new JMenuItem("Salir");
         mnuSalir.addActionListener(this);
 
+        // Asignamos los JMenuItems al menú
         mnOpciones.add(mnuReiniciar);
         mnOpciones.add(mnuResolver);
         mnOpciones.addSeparator();
         mnOpciones.add(mnuSalir);
 
+        // Asignamos el menú a la barra de menú
         mb.add(mnOpciones);
+
+        // Asignamos la barra de menú a la ventana
         setJMenuBar(mb);
+
+        // Ajustes del panel central del sudoku
+        panelCentral = new JPanel();
+        panelCentral.setPreferredSize(new Dimension(450, 450));
+        panelCentral.setBackground(new Color(235, 235, 235));
+        panelCentral.setLayout(new GridLayout(81 / 9, 9, 4, 4));
+        add(panelCentral);
 
         // Creacion de las casillas del tablero de sudoku (9x9)
         for (int i = 0; i < 9; i++)
@@ -54,21 +60,32 @@ public class VentanaSudoku extends JFrame implements ActionListener, WindowListe
             for (int j = 0; j < 9; j++)
             {
                 // Añadimos las casillas al panel
-                casilla[j] = new JTextField();
-                casilla[j].addKeyListener(this);
+                casilla[j] = new CasillaSudoku((((i / 3) % 2 != 0) 
+                        && ((j / 3) % 2 == 0)) 
+                        || (((i / 3) % 2 == 0) 
+                                && ((j / 3) % 2 != 0)));
+//                casilla[j].setHorizontalAlignment(JTextField.CENTER);
+//                casilla[j].setFont(new Font("Arial", Font.ITALIC, 24));
+//                casilla[j].addKeyListener(this);
                 panelCentral.add(casilla[j]);
-
-                // Condicional para pintar las casillas 
-                // Fuente: mestre - Boletin 08.01
-                if ((((i / 3) % 2 != 0) && ((j / 3) % 2 == 0)) || (((i / 3) % 2 == 0) && ((j / 3) % 2 != 0)))
-                {
-                    casilla[j].setBackground(Color.yellow);
-
-                }
+//
+//                // Condicional para pintar las casillas 
+//                // Fuente: mestre - Boletin 08.01
+//                if ((((i / 3) % 2 != 0) && ((j / 3) % 2 == 0)) || (((i / 3) % 2 == 0) && ((j / 3) % 2 != 0)))
+//                {
+//                    casilla[j].setBackground(Color.DARK_GRAY);
+//
+//                } else
+//                {
+//
+//                    casilla[j].setBackground(Color.LIGHT_GRAY);
+//
+//                }
             }
 
         }
 
+        // Configuracion de la ventana
         addWindowListener(this);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -91,12 +108,12 @@ public class VentanaSudoku extends JFrame implements ActionListener, WindowListe
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object obj = e.getSource();
-
-        if (obj == mnuSalir)
-        {
-            salir();
-        }
+//        Object obj = e.getSource();
+//
+//        if (obj == mnuSalir)
+//        {
+//            salir();
+//        }
 
     }
 
@@ -131,33 +148,23 @@ public class VentanaSudoku extends JFrame implements ActionListener, WindowListe
 
     @Override
     public void keyTyped(KeyEvent e) {
+        e.consume();
 
+        char c = e.getKeyChar();
+        if (Character.isDigit(c))
+        {
+            JTextField casilla = (JTextField) e.getSource();
+            casilla.setText(Character.toString(c));
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        Object obj = e.getSource();
-
-        int keyCode = e.getKeyCode();
-
-        for (JTextField casillaX : casilla)
-        {
-            if ((keyCode == KeyEvent.VK_0) || (keyCode == KeyEvent.VK_1)
-                    || (keyCode == KeyEvent.VK_2) || (keyCode == KeyEvent.VK_3)
-                    || (keyCode == KeyEvent.VK_4) || (keyCode == KeyEvent.VK_5)
-                    || (keyCode == KeyEvent.VK_5) || (keyCode == KeyEvent.VK_6)
-                    || (keyCode == KeyEvent.VK_7) || (keyCode == KeyEvent.VK_8)
-                    || (keyCode == KeyEvent.VK_9))
-            {
-
-            } else
-            {
-                casillaX.setText("");
-            }
-        }
 
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+
     }
+}
